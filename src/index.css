@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aurora/Northern Lights Theme Animations and Effects */
+@keyframes aurora-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(127, 95, 255, 0.5),
+                0 0 40px rgba(127, 95, 255, 0.3),
+                0 0 60px rgba(127, 95, 255, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(127, 95, 255, 0.8),
+                0 0 80px rgba(127, 95, 255, 0.5),
+                0 0 120px rgba(127, 95, 255, 0.3);
+  }
+}
+
+@keyframes aurora-pulse {
+  0%, 100% { 
+    text-shadow: 0 0 10px rgba(127, 95, 255, 0.8),
+                 0 0 20px rgba(127, 95, 255, 0.6),
+                 0 0 30px rgba(127, 95, 255, 0.4);
+  }
+  50% { 
+    text-shadow: 0 0 20px rgba(127, 95, 255, 1),
+                 0 0 40px rgba(127, 95, 255, 0.8),
+                 0 0 60px rgba(127, 95, 255, 0.6);
+  }
+}
+
+@keyframes aurora-flow {
+  0%, 100% { 
+    background-position: 0% 50%;
+    opacity: 0.7;
+  }
+  25% { 
+    background-position: 25% 50%;
+    opacity: 1;
+  }
+  50% { 
+    background-position: 50% 50%;
+    opacity: 0.8;
+  }
+  75% { 
+    background-position: 75% 50%;
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-wave {
+  0%, 100% { 
+    transform: translateY(0px) scaleY(1);
+    opacity: 0.6;
+  }
+  50% { 
+    transform: translateY(-10px) scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes aurora-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aurora Utility Classes */
+.aurora-glow {
+  animation: aurora-glow 4s ease-in-out infinite;
+}
+
+.aurora-pulse {
+  animation: aurora-pulse 3s ease-in-out infinite;
+}
+
+.aurora-flow {
+  animation: aurora-flow 8s ease-in-out infinite;
+}
+
+.aurora-wave {
+  animation: aurora-wave 6s ease-in-out infinite;
+}
+
+.aurora-gradient {
+  background: linear-gradient(135deg, #7f5fff, #3b82f6, #8b5cf6, #7f5fff);
+  background-size: 400% 400%;
+  animation: aurora-shift 6s ease infinite;
+}
+
+.aurora-text {
+  background: linear-gradient(135deg, #7f5fff, #3b82f6, #8b5cf6);
+  background-size: 300% 300%;
+  animation: aurora-shift 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.aurora-bg {
+  background: linear-gradient(135deg, #0a0a1a 60%, #181c2f 80%, #232946 100%, #2d1a3a 120%, #1a1a2e 140%, #1e2746 160%, #2e1a2d 180%);
+}
+
+.aurora-border {
+  background: linear-gradient(135deg, #7f5fff, #3b82f6, #8b5cf6);
+  padding: 1px;
+  border-radius: 0.75rem;
+}
+
+.aurora-border > * {
+  background: #0a0a1a;
+  border-radius: 0.75rem;
+}
+
+.float-animation {
+  animation: aurora-wave 8s ease-in-out infinite;
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+/* Custom scrollbar for aurora theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #001a0d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7f5fff, #3b82f6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(127, 95, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Aurora field pattern */
+.aurora-field {
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, #7f5fff, transparent),
+    radial-gradient(2px 2px at 40px 70px, #3b82f6, transparent),
+    radial-gradient(1px 1px at 90px 40px, #8b5cf6, transparent),
+    radial-gradient(1px 1px at 130px 80px, #7f5fff, transparent),
+    radial-gradient(2px 2px at 160px 30px, #3b82f6, transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: aurora-flow 6s ease-in-out infinite;
+}
+
+/* Aurora effect */
+.aurora {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(127, 95, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  background-size: 300px 300px, 400px 400px, 350px 350px;
+  animation: aurora-flow 12s ease-in-out infinite;
+}
