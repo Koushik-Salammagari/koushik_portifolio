@@ -372,10 +372,10 @@ const Projects = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Featured <span className="aurora-text">Projects</span>
+              Featured <span className="gradient-text-dark">Projects</span>
             </h2>
-            <div className="h-1 w-24 bg-gradient-to-r from-violet-500 via-blue-500 to-purple-500 mx-auto rounded-full mb-8"></div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+            <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full mb-8"></div>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
               A showcase of innovative AI/ML solutions, RAG systems, and full-stack applications
             </p>
 
@@ -387,8 +387,8 @@ const Projects = () => {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-6 py-3 rounded-full font-medium transition-colors duration-300 ${
                     selectedCategory === category
-                      ? 'bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg'
-                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600 hover:border-gray-500'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg'
+                      : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700 border border-slate-600 hover:border-slate-500'
                   }`}
                 >
                   {category}
@@ -401,7 +401,7 @@ const Projects = () => {
             {filteredProjects.map((project, index) => (
               <div 
                 key={index}
-                className="bg-gray-900/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-700 hover:border-gray-600 backdrop-blur-sm group cursor-pointer"
+                className="clean-card-dark hover-lift-dark group cursor-pointer"
                 onClick={() => handleProjectClick(project)}
               >
                 <div className="relative overflow-hidden">
@@ -412,9 +412,9 @@ const Projects = () => {
                     loading="lazy"
                     decoding="async"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>
-                  <div className="absolute top-4 right-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-700">
-                    <div className="flex items-center gap-1 text-sm text-gray-300">
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                  <div className="absolute top-4 right-4 bg-slate-900/90 backdrop-blur-sm px-3 py-1 rounded-full border border-slate-700">
+                    <div className="flex items-center gap-1 text-sm text-slate-300">
                       <Calendar size={14} />
                       {project.date}
                     </div>
@@ -424,14 +424,14 @@ const Projects = () => {
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">
                     {getCategoryIcon(project.category)}
-                    <span className="text-sm font-medium text-violet-400">{project.category}</span>
+                    <span className="text-sm font-medium text-blue-400">{project.category}</span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-3 hover:text-violet-400 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-3 hover:text-blue-400 transition-colors">
                     {project.title}
                   </h3>
                   
-                  <p className="text-gray-400 mb-4 line-clamp-3">
+                  <p className="text-slate-400 mb-4 line-clamp-3">
                     {project.description}
                   </p>
 
@@ -439,13 +439,13 @@ const Projects = () => {
                     {project.tech.slice(0, 4).map((tech, techIndex) => (
                       <span 
                         key={techIndex}
-                        className="px-3 py-1 bg-gray-800/50 text-gray-300 rounded-md text-xs font-medium border border-gray-700"
+                        className="px-3 py-1 bg-slate-800/50 text-slate-300 rounded-md text-xs font-medium border border-slate-700"
                       >
                         {tech}
                       </span>
                     ))}
                     {project.tech.length > 4 && (
-                      <span className="px-3 py-1 bg-violet-500/20 text-violet-400 rounded-md text-xs font-medium border border-violet-500/30">
+                      <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-md text-xs font-medium border border-blue-500/30">
                         +{project.tech.length - 4} more
                       </span>
                     )}
@@ -456,8 +456,8 @@ const Projects = () => {
                       <h4 className="text-sm font-semibold text-yellow-400 mb-2">Key Achievements:</h4>
                       <ul className="space-y-1">
                         {project.achievements.slice(0, 2).map((achievement, idx) => (
-                          <li key={idx} className="text-xs text-gray-400 flex items-start gap-2">
-                            <span className="w-1.5 h-1.5 bg-violet-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                          <li key={idx} className="text-xs text-slate-400 flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0"></span>
                             {achievement}
                           </li>
                         ))}
@@ -465,8 +465,8 @@ const Projects = () => {
                     </div>
                     
                     <div>
-                      <h4 className="text-sm font-semibold text-violet-400 mb-2">Impact:</h4>
-                      <p className="text-xs text-gray-400">
+                      <h4 className="text-sm font-semibold text-blue-400 mb-2">Impact:</h4>
+                      <p className="text-xs text-slate-400">
                         {project.impact.substring(0, 120)}...
                       </p>
                     </div>
@@ -481,7 +481,7 @@ const Projects = () => {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900/50 hover:bg-gray-800/50 text-gray-300 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 border border-gray-700 hover:border-gray-600 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900/50 hover:bg-slate-800/50 text-slate-300 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 border border-slate-700 hover:border-slate-600 backdrop-blur-sm hover-lift-dark"
             >
               <Github size={20} />
               View All Projects on GitHub
@@ -493,23 +493,23 @@ const Projects = () => {
       {/* Project Modal */}
       {selectedProject && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900/95 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-700 backdrop-blur-sm">
+          <div className="bg-slate-900/95 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-700 backdrop-blur-sm">
             <div className="p-8">
               {/* Modal Header */}
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
                     {getCategoryIcon(selectedProject.category)}
-                    <span className="text-sm font-medium text-violet-400">{selectedProject.category}</span>
-                    <span className="text-sm text-gray-400">• {selectedProject.date}</span>
+                    <span className="text-sm font-medium text-blue-400">{selectedProject.category}</span>
+                    <span className="text-sm text-slate-400">• {selectedProject.date}</span>
                   </div>
                   <h2 className="text-3xl font-bold text-white mb-2">{selectedProject.title}</h2>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
                 >
-                  <X size={24} className="text-gray-400 hover:text-white" />
+                  <X size={24} className="text-slate-400 hover:text-white" />
                 </button>
               </div>
 
@@ -520,13 +520,13 @@ const Projects = () => {
                   alt={selectedProject.title}
                   className="w-full h-64 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
               </div>
 
               {/* Project Description */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Project Overview</h3>
-                <p className="text-gray-300 leading-relaxed">{selectedProject.detailedDescription}</p>
+                <p className="text-slate-300 leading-relaxed">{selectedProject.detailedDescription}</p>
               </div>
 
               {/* Technology Stack */}
@@ -536,7 +536,7 @@ const Projects = () => {
                   {selectedProject.tech.map((tech, index) => (
                     <span 
                       key={index}
-                      className="px-4 py-2 bg-gray-800/50 text-gray-300 rounded-lg text-sm font-medium border border-gray-700"
+                      className="px-4 py-2 bg-slate-800/50 text-slate-300 rounded-lg text-sm font-medium border border-slate-700"
                     >
                       {tech}
                     </span>
@@ -549,8 +549,8 @@ const Projects = () => {
                 <h3 className="text-xl font-semibold text-white mb-4">Key Achievements</h3>
                 <ul className="space-y-3">
                   {selectedProject.achievements.map((achievement, index) => (
-                    <li key={index} className="flex items-start gap-3 text-gray-300">
-                      <span className="w-2 h-2 bg-violet-400 rounded-full mt-2 flex-shrink-0"></span>
+                    <li key={index} className="flex items-start gap-3 text-slate-300">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
                       <span>{achievement}</span>
                     </li>
                   ))}
@@ -562,7 +562,7 @@ const Projects = () => {
                 <h3 className="text-xl font-semibold text-white mb-4">Technical Challenges</h3>
                 <ul className="space-y-3">
                   {selectedProject.challenges.map((challenge, index) => (
-                    <li key={index} className="flex items-start gap-3 text-gray-300">
+                    <li key={index} className="flex items-start gap-3 text-slate-300">
                       <span className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></span>
                       <span>{challenge}</span>
                     </li>
@@ -573,7 +573,7 @@ const Projects = () => {
               {/* Impact */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Impact & Results</h3>
-                <p className="text-gray-300 leading-relaxed">{selectedProject.impact}</p>
+                <p className="text-slate-300 leading-relaxed">{selectedProject.impact}</p>
               </div>
 
 
