@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Code } from 'lucide-react';
+import { Code } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -75,9 +75,6 @@ const Footer = () => {
           <div className="border-t border-slate-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2 text-slate-400">
-                <span>Made with</span>
-                <Heart className="w-4 h-4 text-red-500 fill-current" />
-                <span>and</span>
                 <Code className="w-4 h-4 text-blue-400" />
                 <span>by Koushik Salammagari</span>
               </div>
