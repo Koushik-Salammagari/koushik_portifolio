@@ -88,7 +88,7 @@ const Skills = () => {
 
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div className="clean-card-dark hover-lift-dark">
-              <div className="text-3xl font-bold text-blue-400 mb-2">15+</div>
+              <div className="text-3xl font-bold text-blue-400 mb-2">40+</div>
               <div className="text-slate-300">AI/ML Projects</div>
             </div>
             <div className="clean-card-dark hover-lift-dark">
@@ -96,7 +96,7 @@ const Skills = () => {
               <div className="text-slate-300">Years Experience</div>
             </div>
             <div className="clean-card-dark hover-lift-dark">
-              <div className="text-3xl font-bold text-blue-600 mb-2">10+</div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">20+</div>
               <div className="text-slate-300">Technologies Mastered</div>
             </div>
             <div className="clean-card-dark hover-lift-dark">

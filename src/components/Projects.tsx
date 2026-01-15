@@ -1,6 +1,86 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { ExternalLink, Github, Calendar, Tag, Award, Code, Database, Brain, Zap, X } from 'lucide-react';
 
+// Helper function to highlight technologies in text
+const highlightTechnologies = (text: string) => {
+  // Common technology keywords to highlight
+  const techKeywords = [
+    'LangGraph', 'LangChain', 'AWS', 'GCP', 'OpenAI', 'GPT-4', 'LLaMA2', 'LLaMA', 'GPT', 'Claude', 'Mistral', 'Gemini',
+    'FastAPI', 'Next.js', 'React', 'Node.js', 'Python', 'JavaScript', 'TypeScript', 'MongoDB', 'PostgreSQL',
+    'Docker', 'Kubernetes', 'Lambda', 'S3', 'EC2', 'DynamoDB', 'Timestream', 'Amplify', 'SageMaker',
+    'FAISS', 'Pinecone', 'ChromaDB', 'Elastic Search', 'BERT', 'spaCy', 'TensorFlow', 'PyTorch',
+    'XGBoost', 'LightGBM', 'Scikit-learn', 'Pandas', 'NumPy', 'OpenCV', 'LSTM', 'CNN', 'ResNet',
+    'MobileNetV2', 'Q-Learning', 'RLHF', 'RAG', 'MCP', 'Model Context Protocol', 'QLoRA', 'LORA',
+    'Tuya Cloud', 'Playwright', 'Gradio', 'Streamlit', 'MERN', 'MCP', 'Whisper', 'Deepseek',
+    'Groq API', 'Llama3', 'Mixtral', 'Chrome Extension', 'Flask', 'Raspberry Pi', 'Google Speech API',
+    'GitHub Actions', 'Cron Jobs', 'Gmail API', 'Google Sheets API', 'Google Calendar API', 'Pydantic',
+    'Uvicorn', 'LlamaParse', 'SentenceTransformer', 'BAAI', 'GloVe', 'Random Forest', 'K-Means',
+    'Stratified K-Fold', 'SGD', 'Adam', 'SCG', 'Matplotlib', 'Jupyter', 'Power BI', 'Tableau'
+  ];
+
+  // Sort by length (longest first) to match longer phrases first
+  const sortedKeywords = techKeywords.sort((a, b) => b.length - a.length);
+  
+  const parts: Array<{ text: string; isTech: boolean }> = [];
+  let lastIndex = 0;
+
+  // Find all matches
+  const matches: Array<{ start: number; end: number; keyword: string }> = [];
+  
+  sortedKeywords.forEach(keyword => {
+    const regex = new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      matches.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        keyword: match[0]
+      });
+    }
+  });
+
+  // Sort matches by start position
+  matches.sort((a, b) => a.start - b.start);
+
+  // Remove overlapping matches (keep the first one)
+  const nonOverlapping: typeof matches = [];
+  matches.forEach(match => {
+    if (nonOverlapping.length === 0 || match.start >= nonOverlapping[nonOverlapping.length - 1].end) {
+      nonOverlapping.push(match);
+    }
+  });
+
+  // Build parts array
+  nonOverlapping.forEach(match => {
+    if (match.start > lastIndex) {
+      parts.push({ text: text.substring(lastIndex, match.start), isTech: false });
+    }
+    parts.push({ text: match.keyword, isTech: true });
+    lastIndex = match.end;
+  });
+
+  if (lastIndex < text.length) {
+    parts.push({ text: text.substring(lastIndex), isTech: false });
+  }
+
+  // If no matches, return original text
+  if (parts.length === 0) {
+    return <span className="text-cyan-300">{text}</span>;
+  }
+
+  return (
+    <span className="text-cyan-300">
+      {parts.map((part, index) => 
+        part.isTech ? (
+          <span key={index} className="text-white font-semibold">{part.text}</span>
+        ) : (
+          <span key={index}>{part.text}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 interface Project {
   title: string;
   description: string;
@@ -27,10 +107,10 @@ const Projects = () => {
       title: "WebAgent Chrome Extension",
       description: "A smart Chrome extension that extracts key insights from any webpage and answers questions in natural, conversational language. Built to solve the problem of dense, overwhelming web content by providing instant, simplified answers.",
       detailedDescription: "WebAgent addresses the common frustration of landing on promising webpages only to get lost in dense, never-ending text. This intelligent Chrome extension acts like a smart friend who reads the page for you and instantly tells you what matters. The system extracts key insights from any webpage and answers questions in natural, conversational language while maintaining conversation context for natural follow-ups.",
-      image: "https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["JavaScript", "HTML", "CSS", "Chrome Extension APIs", "Python", "FastAPI", "Pydantic", "Uvicorn", "LangGraph", "LangChain", "Groq API", "Llama3-8b", "Async Processing"],
       category: "AI/ML",
-      date: "2024",
+      date: "2025",
       github: "#",
       achievements: [
         "Built intelligent web content extraction and summarization system",
@@ -50,10 +130,10 @@ const Projects = () => {
       title: "Menu Mind - AI Dining Assistant",
       description: "Multi-agent AI system that helps discover safe food options at restaurants based on dietary restrictions. Uses real menu data scraping and specialized agents for planning, working, and evaluation.",
       detailedDescription: "This innovative multi-agent AI assistant solves a practical and personal problem: finding safe food options at any restaurant based on dietary restrictions. The system brings together three specialized agents - Planner, Worker, and Evaluator - to provide accurate, real-time dietary guidance using actual restaurant menus rather than pre-fed databases.",
-      image: "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["LangGraph", "OpenAI GPT-4o-mini", "Playwright", "Google Serper", "Gradio", "Multi-Agent Systems", "Web Scraping", "Dietary Analysis"],
       category: "AI/ML",
-      date: "2024",
+      date: "2025",
       github: "#",
       achievements: [
         "Built multi-agent orchestration system for dietary analysis",
@@ -73,10 +153,10 @@ const Projects = () => {
       title: "AutoFlow - Intelligent Workflow Agent",
       description: "Advanced automation agent that runs every hour via GitHub Actions to monitor emails, update Google Sheets, send push notifications, and manage calendar events. Integrates Gmail, Google Sheets, and Google Calendar APIs for comprehensive workflow automation.",
       detailedDescription: "This sophisticated LangGraph ReAct Agent Template creates reasoning and action agents using LangGraph and LangChain frameworks. The agent runs automated workflows every hour through GitHub Actions cron jobs, performing intelligent email monitoring, Google Sheets updates, push notifications, and calendar management. It demonstrates advanced AI agent capabilities for real-world automation tasks.",
-      image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "TypeScript", "LangGraph", "LangChain", "OpenAI", "Anthropic", "Google APIs", "Milvus", "Weaviate", "Redis", "GitHub Actions", "Cron Jobs", "Gmail API", "Google Sheets API", "Google Calendar API"],
       category: "AI/ML",
-      date: "2024",
+      date: "2025",
       github: "#",
       achievements: [
         "Built automated reasoning and action agents using LangGraph",
@@ -96,7 +176,7 @@ const Projects = () => {
       title: "Misinformation Classification Engine",
       description: "Developed a classification engine using GloVe embeddings and LSTM to determine whether information is TRUE or FALSE. Merged multiple data sources including tweets, 70,000+ articles, and blogs for training. Experimented with various ML & DL models, fine-tuned BERT, and applied Stratified K-Fold Cross-Validation to address data imbalance.",
       detailedDescription: "This comprehensive misinformation detection system was built to combat the spread of fake news and misleading information. The project involved extensive data preprocessing, including tokenization and lemmatization of diverse text sources. The system achieved high accuracy through ensemble methods combining multiple models and careful hyperparameter tuning.",
-      image: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "TensorFlow", "PyTorch", "BERT", "GloVe", "LSTM", "CNN", "Random Forest", "scikit-learn", "Stratified K-Fold"],
       category: "AI/ML",
       date: "Jul 2023 - Dec 2023",
@@ -119,7 +199,7 @@ const Projects = () => {
       title: "Complex Document Analysis RAG",
       description: "Created a dynamic document analysis and Q&A system for financial and medical documents. Leverages LlamaParse for parsing complex documents, transforming them into structured markdown, and utilizing advanced language models for enhanced document understanding and information retrieval.",
       detailedDescription: "This advanced RAG system specializes in processing complex financial reports, medical documents, and research papers. The system can handle multi-page documents with tables, charts, and structured data, providing accurate context-aware responses to user queries. The implementation includes sophisticated document chunking strategies and semantic search capabilities.",
-      image: "https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["LangChain", "LlamaParse", "Mixtral-8x7b", "ChromaDB", "Streamlit", "Groq API", "BAAI/bge-base-en-v1.5"],
       category: "RAG Systems",
       date: "2024",
@@ -142,7 +222,7 @@ const Projects = () => {
       title: "Multimodal RAG System",
       description: "Developed an advanced RAG system that processes PowerPoint presentations and PDFs, extracting text, tables, and images with multimodal embedding capabilities. Enhanced with multimodal embedding capabilities to process both text and images from PowerPoint slides.",
       detailedDescription: "This cutting-edge multimodal RAG system can process both text and visual content from presentations and documents. The system extracts and embeds images alongside text, enabling comprehensive content understanding. It features advanced chunking strategies and similarity-based retrieval for both textual and visual information.",
-      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/159775/library-la-trobe-study-students-159775.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["LangChain", "FAISS", "SentenceTransformer", "Groq API", "Llama3", "Multimodal Embeddings"],
       category: "RAG Systems",
       date: "2024",
@@ -164,7 +244,7 @@ const Projects = () => {
       title: "Email Generator RAG",
       description: "Developed a RAG framework for cold email generation, tailoring content based on portfolio, resume, and job description. Utilizes ChromaDB as the vector store and features a Streamlit-based UI for seamless interaction.",
       detailedDescription: "This intelligent email generation system analyzes job descriptions, company information, and candidate profiles to create personalized cold emails. The system uses advanced NLP techniques to understand context and generate compelling, professional emails that increase response rates.",
-      image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://cdn-icons-png.flaticon.com/512/732/732200.png",
       tech: ["Python", "LangChain", "ChromaDB", "OpenAI API", "Streamlit"],
       category: "RAG Systems",
       date: "2024",
@@ -187,7 +267,7 @@ const Projects = () => {
       title: "Transfer Learning Image Recognition",
       description: "Performed in-depth analysis of CNN architectures (ResNet, AlexNet, MobileNetV2) for fine-grained image recognition. Fine-tuned ResNet50 on Plant Species dataset achieving 80% accuracy and adapted MobileNetV2 on custom datasets using transfer learning.",
       detailedDescription: "This comprehensive computer vision project involved extensive experimentation with state-of-the-art CNN architectures. The project focused on transfer learning techniques to achieve high accuracy on specialized datasets while maintaining computational efficiency. The work included detailed performance analysis and optimization strategies.",
-      image: "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "TensorFlow", "ResNet50", "MobileNetV2", "Transfer Learning", "CNN", "Feature Engineering"],
       category: "Computer Vision",
       date: "2023",
@@ -231,7 +311,7 @@ const Projects = () => {
       title: "Reinforcement Learning Robot Control",
       description: "Trained a reinforcement learning model to control a robotic arm by experimenting with various configurations. Tuned model parameters including hidden layer structure, learning steps, epsilon, gamma, and SCG iterations to optimize performance.",
       detailedDescription: "This advanced RL project focused on developing intelligent control systems for robotic manipulation tasks. The work involved extensive hyperparameter optimization and careful analysis of different RL algorithms to achieve precise control over robotic arm movements.",
-      image: "https://images.pexels.com/photos/8567434/pexels-photo-8567434.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "PyTorch", "Reinforcement Learning", "Robotics", "Parameter Tuning"],
       category: "Reinforcement Learning",
       date: "2023",
@@ -253,7 +333,7 @@ const Projects = () => {
       title: "Tic Tac Toe using Q-learning",
       description: "Built a classic Tic Tac Toe game powered by Q-learning to develop an AI agent that learns optimal strategies through reinforcement learning. Designed the agent to balance exploration and exploitation with iterative training.",
       detailedDescription: "This educational RL project demonstrates fundamental concepts of reinforcement learning through a familiar game environment. The Q-learning agent progressively improves its strategy through self-play and careful exploration of the game state space.",
-      image: "https://images.pexels.com/photos/8567434/pexels-photo-8567434.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/163036/mario-luigi-yoschi-figures-163036.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "NumPy", "PyTorch", "Reinforcement Learning", "Q-Learning", "pandas"],
       category: "Reinforcement Learning",
       date: "2023",
@@ -275,7 +355,7 @@ const Projects = () => {
       title: "Reinforcement Learning Game Agent",
       description: "Developed a Q-learning agent for strategic gameplay, implementing exploration-exploitation balance and reward structures. Created comprehensive performance analysis tools to evaluate agent behavior and decision-making patterns.",
       detailedDescription: "This reinforcement learning project focused on developing intelligent game-playing agents using Q-learning algorithms. The system implemented sophisticated reward structures and exploration strategies to optimize agent performance in strategic game environments.",
-      image: "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Python", "NumPy", "Matplotlib", "Q-Learning", "Reinforcement Learning", "Game Theory"],
       category: "Reinforcement Learning",
       date: "2023",
@@ -297,7 +377,7 @@ const Projects = () => {
       title: "Voice Controlled Smart Assistant",
       description: "Built a voice-controlled smart assistant 'JARVIS' using Raspberry Pi, integrating Google Speech-to-Text and Text-to-Speech APIs. Developed a multi-label classification model with custom datasets to accurately interpret complex user intents.",
       detailedDescription: "This IoT project combines hardware and software to create an intelligent voice assistant. The system processes natural language commands and provides spoken responses, demonstrating practical applications of AI in embedded systems. The custom classification model ensures accurate interpretation of user intentions.",
-      image: "https://images.pexels.com/photos/8566473/pexels-photo-8566473.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["Raspberry Pi", "Google Speech API", "Python", "PyTorch", "Multi-label Classification", "IoT"],
       category: "AI/ML",
       date: "2023",
@@ -319,7 +399,7 @@ const Projects = () => {
       title: "Expense Tracker",
       description: "Full-stack web application for tracking all expenses with comprehensive financial management features. Built with modern web technologies for seamless user experience and robust data management.",
       detailedDescription: "This comprehensive financial management application provides users with detailed expense tracking, categorization, and analysis tools. The system includes features for budget management, expense reporting, and financial insights, helping users maintain better control over their finances.",
-      image: "https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=400",
       tech: ["JavaScript", "React", "Node.js", "Database", "Full-Stack", "Web Development"],
       category: "Full-Stack",
       date: "2024",
@@ -431,21 +511,21 @@ const Projects = () => {
                     {project.title}
                   </h3>
                   
-                  <p className="text-slate-400 mb-4 line-clamp-3">
-                    {project.description}
+                  <p className="text-cyan-300 mb-4 line-clamp-3">
+                    {highlightTechnologies(project.description)}
                   </p>
 
                   <div className="flex flex-wrap gap-2 mb-6">
                     {project.tech.slice(0, 4).map((tech, techIndex) => (
                       <span 
                         key={techIndex}
-                        className="px-3 py-1 bg-slate-800/50 text-slate-300 rounded-md text-xs font-medium border border-slate-700"
+                        className="px-3 py-1 bg-slate-800/50 text-white rounded-md text-xs font-medium border border-slate-700"
                       >
                         {tech}
                       </span>
                     ))}
                     {project.tech.length > 4 && (
-                      <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-md text-xs font-medium border border-blue-500/30">
+                      <span className="px-3 py-1 bg-blue-500/20 text-white rounded-md text-xs font-medium border border-blue-500/30">
                         +{project.tech.length - 4} more
                       </span>
                     )}
@@ -456,9 +536,9 @@ const Projects = () => {
                       <h4 className="text-sm font-semibold text-yellow-400 mb-2">Key Achievements:</h4>
                       <ul className="space-y-1">
                         {project.achievements.slice(0, 2).map((achievement, idx) => (
-                          <li key={idx} className="text-xs text-slate-400 flex items-start gap-2">
+                          <li key={idx} className="text-xs flex items-start gap-2">
                             <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0"></span>
-                            {achievement}
+                            <span>{highlightTechnologies(achievement)}</span>
                           </li>
                         ))}
                       </ul>
@@ -466,8 +546,8 @@ const Projects = () => {
                     
                     <div>
                       <h4 className="text-sm font-semibold text-blue-400 mb-2">Impact:</h4>
-                      <p className="text-xs text-slate-400">
-                        {project.impact.substring(0, 120)}...
+                      <p className="text-xs">
+                        {highlightTechnologies(project.impact.substring(0, 120) + '...')}
                       </p>
                     </div>
                   </div>
@@ -526,7 +606,7 @@ const Projects = () => {
               {/* Project Description */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Project Overview</h3>
-                <p className="text-slate-300 leading-relaxed">{selectedProject.detailedDescription}</p>
+                <p className="leading-relaxed">{highlightTechnologies(selectedProject.detailedDescription)}</p>
               </div>
 
               {/* Technology Stack */}
@@ -536,7 +616,7 @@ const Projects = () => {
                   {selectedProject.tech.map((tech, index) => (
                     <span 
                       key={index}
-                      className="px-4 py-2 bg-slate-800/50 text-slate-300 rounded-lg text-sm font-medium border border-slate-700"
+                      className="px-4 py-2 bg-slate-800/50 text-white rounded-lg text-sm font-medium border border-slate-700"
                     >
                       {tech}
                     </span>
@@ -549,9 +629,9 @@ const Projects = () => {
                 <h3 className="text-xl font-semibold text-white mb-4">Key Achievements</h3>
                 <ul className="space-y-3">
                   {selectedProject.achievements.map((achievement, index) => (
-                    <li key={index} className="flex items-start gap-3 text-slate-300">
+                    <li key={index} className="flex items-start gap-3">
                       <span className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
-                      <span>{achievement}</span>
+                      <span>{highlightTechnologies(achievement)}</span>
                     </li>
                   ))}
                 </ul>
@@ -562,9 +642,9 @@ const Projects = () => {
                 <h3 className="text-xl font-semibold text-white mb-4">Technical Challenges</h3>
                 <ul className="space-y-3">
                   {selectedProject.challenges.map((challenge, index) => (
-                    <li key={index} className="flex items-start gap-3 text-slate-300">
+                    <li key={index} className="flex items-start gap-3">
                       <span className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></span>
-                      <span>{challenge}</span>
+                      <span>{highlightTechnologies(challenge)}</span>
                     </li>
                   ))}
                 </ul>
@@ -573,7 +653,7 @@ const Projects = () => {
               {/* Impact */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Impact & Results</h3>
-                <p className="text-slate-300 leading-relaxed">{selectedProject.impact}</p>
+                <p className="leading-relaxed">{highlightTechnologies(selectedProject.impact)}</p>
               </div>
 
 
