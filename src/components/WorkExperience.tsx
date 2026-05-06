@@ -90,7 +90,7 @@ const experiences = [
     ]
   },
   {
-    company: 'Immihub, USA',
+    company: 'AT&T, USA',
     role: 'Machine Learning & GenAI Engineer',
     dates: 'Sep 2024 – July 2025',
     highlights: [
