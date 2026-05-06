@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Mail, ChevronDown } from 'lucide-react';
+import { Github, Mail, ChevronDown } from 'lucide-react';
 
 const Hero = () => {
   return (
@@ -48,15 +48,6 @@ const Hero = () => {
               aria-label="GitHub Profile"
             >
               <Github size={24} className="text-slate-300 hover:text-white transition-colors" />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 bg-slate-800/50 hover:bg-slate-800 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20 border border-slate-700 hover:border-white hover-lift-dark"
-              aria-label="LinkedIn Profile"
-            >
-              <Linkedin size={24} className="text-slate-300 hover:text-white transition-colors" />
             </a>
             <a
               href="mailto:your.email@example.com"
