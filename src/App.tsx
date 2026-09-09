@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import OpenSource from './components/OpenSource';
 import About from './components/About';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
@@ -15,6 +16,7 @@ function App() {
         <Header />
         <main>
           <Hero />
+          <OpenSource />
           <About />
           <Skills />
           <WorkExperience />
