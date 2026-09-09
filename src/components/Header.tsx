@@ -56,7 +56,7 @@ const Header = ({ view, onToggleView }: HeaderProps) => {
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-slate-600 text-cyan-200 hover:text-white hover:border-white transition-all duration-300"
             >
               {view === 'classic' ? <Network size={16} /> : <LayoutList size={16} />}
-              {view === 'classic' ? 'Graph View' : 'Classic View'}
+              {view === 'classic' ? 'Explore Graph' : 'Simple View'}
             </button>
           </div>
 
@@ -67,7 +67,7 @@ const Header = ({ view, onToggleView }: HeaderProps) => {
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border border-slate-600 text-cyan-200"
             >
               {view === 'classic' ? <Network size={14} /> : <LayoutList size={14} />}
-              {view === 'classic' ? 'Graph' : 'Classic'}
+              {view === 'classic' ? 'Graph' : 'Simple'}
             </button>
             {view === 'classic' && (
               <button

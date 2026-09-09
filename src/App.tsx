@@ -11,7 +11,7 @@ import WorkExperience from './components/WorkExperience';
 import GraphView from './components/GraphView';
 
 function App() {
-  const [view, setView] = useState<'classic' | 'graph'>('classic');
+  const [view, setView] = useState<'classic' | 'graph'>('graph');
 
   return (
     <div className="min-h-screen minimal-dark-bg">

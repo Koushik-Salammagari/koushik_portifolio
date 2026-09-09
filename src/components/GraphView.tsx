@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import ForceGraph2D, { ForceGraphMethods, NodeObject, LinkObject } from 'react-force-graph-2d';
-import { X, Search, RotateCcw, ExternalLink, Github, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { X, Search, RotateCcw, ExternalLink, Github, Linkedin, Mail, Phone, MapPin, Construction } from 'lucide-react';
 import { repos, formatStars } from './OpenSource';
 
 type CategoryKey = 'root' | 'about' | 'skills' | 'experience' | 'projects' | 'opensource' | 'contact';
@@ -29,6 +29,8 @@ interface GNode {
   panel: NodePanel;
   x?: number;
   y?: number;
+  fx?: number;
+  fy?: number;
 }
 
 interface GLink {
@@ -37,13 +39,23 @@ interface GLink {
 }
 
 const categoryColors: Record<CategoryKey, string> = {
-  root: '#ffffff',
-  about: '#38bdf8',
-  skills: '#a78bfa',
-  experience: '#34d399',
-  projects: '#fb923c',
-  opensource: '#f472b6',
-  contact: '#facc15',
+  root: '#0c0a1a',
+  about: '#2563eb',
+  skills: '#9333ea',
+  experience: '#059669',
+  projects: '#ea580c',
+  opensource: '#db2777',
+  contact: '#ca8a04',
+};
+
+const categoryColorsDeep: Record<CategoryKey, string> = {
+  root: '#000000',
+  about: '#1e3a8a',
+  skills: '#581c87',
+  experience: '#064e3b',
+  projects: '#7c2d12',
+  opensource: '#831843',
+  contact: '#713f12',
 };
 
 const categoryLabels: Record<Exclude<CategoryKey, 'root'>, string> = {
@@ -67,6 +79,8 @@ const buildGraph = (): { nodes: GNode[]; links: GLink[] } => {
     kind: 'root',
     category: 'root',
     val: 100,
+    fx: 0,
+    fy: 0,
     panel: {
       title: 'Koushik Salammagari',
       meta: 'AI/ML Engineer & Full-Stack Developer',
@@ -122,8 +136,19 @@ const buildGraph = (): { nodes: GNode[]; links: GLink[] } => {
     },
   ];
 
-  hubs.forEach((h) => {
-    nodes.push({ id: h.id, name: h.name, kind: 'hub', category: h.category, val: 49, panel: h.panel });
+  const HUB_RING_RADIUS = 200;
+  hubs.forEach((h, i) => {
+    const angle = (i / hubs.length) * 2 * Math.PI - Math.PI / 2;
+    nodes.push({
+      id: h.id,
+      name: h.name,
+      kind: 'hub',
+      category: h.category,
+      val: 49,
+      panel: h.panel,
+      fx: HUB_RING_RADIUS * Math.cos(angle),
+      fy: HUB_RING_RADIUS * Math.sin(angle),
+    });
     links.push({ source: 'root', target: h.id });
   });
 
@@ -339,38 +364,69 @@ const GraphView = () => {
     fgRef.current?.zoomToFit(600, 60);
   }, []);
 
+  const [introVisible, setIntroVisible] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIntroVisible(false), 5000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const dismissIntro = useCallback(() => setIntroVisible(false), []);
+
   const handleNodeClick = useCallback((node: NodeObject<GNode>) => {
     setSelected(node as GNode);
+    dismissIntro();
     const n = node as GNode;
     if (typeof n.x === 'number' && typeof n.y === 'number') {
       fgRef.current?.centerAt(n.x, n.y, 500);
     }
-  }, []);
+  }, [dismissIntro]);
 
   const nodeRadius = (n: GNode) => Math.sqrt(n.val);
 
   return (
-    <div className="fixed inset-0 pt-20 bg-black overflow-hidden" ref={containerRef}>
+    <div className="fixed inset-0 pt-20 overflow-hidden" ref={containerRef} style={{
+      background: 'radial-gradient(ellipse 80% 65% at 50% 38%, rgba(14,165,233,0.16) 0%, rgba(226,232,240,0.4) 45%, #f8fafc 75%), radial-gradient(ellipse 65% 55% at 85% 80%, rgba(236,72,153,0.12), transparent 60%), radial-gradient(ellipse 65% 55% at 10% 85%, rgba(139,92,246,0.12), transparent 60%), #f8fafc'
+    }}>
+      {/* Vignette */}
+      <div className="pointer-events-none absolute inset-0 z-[5]" style={{
+        boxShadow: 'inset 0 0 160px 20px rgba(148,163,184,0.18)'
+      }} />
+
+      {/* Intro overlay */}
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-24 sm:top-28 z-10 flex flex-col items-center text-center px-6 transition-opacity duration-700 ${
+          introVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        <p className="text-lg sm:text-2xl text-slate-800 font-medium mb-2">
+          AI/ML Engineer &amp; Full-Stack Developer
+        </p>
+        <p className="text-sm sm:text-base text-slate-500">
+          An interactive map of my work — <span className="text-slate-900 font-semibold">click any node</span> to dive in
+        </p>
+      </div>
+
       {/* Search */}
       <div className="absolute top-24 left-4 z-20 flex items-center gap-2">
-        <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200 rounded-full px-4 py-2 shadow-lg shadow-slate-300/40">
           <Search size={16} className="text-slate-400" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search the vault..."
-            className="bg-transparent text-sm text-white placeholder-slate-500 outline-none w-40 sm:w-56"
+            placeholder="Search the graph..."
+            className="bg-transparent text-sm text-slate-800 placeholder-slate-400 outline-none w-32 sm:w-56"
           />
           {query && (
-            <button onClick={() => setQuery('')} className="text-slate-500 hover:text-white transition-colors">
+            <button onClick={() => setQuery('')} className="text-slate-400 hover:text-slate-900 transition-colors">
               <X size={14} />
             </button>
           )}
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-2 text-sm text-slate-300 hover:text-white transition-colors"
+          className="flex items-center gap-2 bg-white/80 backdrop-blur-md border border-slate-200 hover:border-slate-400 rounded-full px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors shadow-lg shadow-slate-300/40"
         >
           <RotateCcw size={14} />
           <span className="hidden sm:inline">Reset</span>
@@ -378,25 +434,41 @@ const GraphView = () => {
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-6 left-4 z-20 bg-slate-900/80 backdrop-blur-sm border border-slate-700 rounded-lg px-4 py-3 hidden sm:block">
+      <div className="absolute bottom-6 left-4 z-20 bg-white/80 backdrop-blur-md border border-slate-200 rounded-xl px-4 py-3 hidden sm:block shadow-lg shadow-slate-300/40">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Categories</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
           {(Object.keys(categoryLabels) as Array<keyof typeof categoryLabels>).map((key) => (
-            <div key={key} className="flex items-center gap-2 text-xs text-slate-300">
-              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: categoryColors[key] }} />
+            <div key={key} className="flex items-center gap-2 text-xs text-slate-600">
+              <span
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                style={{ backgroundColor: categoryColors[key], boxShadow: `0 0 6px ${categoryColors[key]}` }}
+              />
               {categoryLabels[key]}
             </div>
           ))}
         </div>
       </div>
 
+      {/* Work-in-progress notice */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-amber-50/90 backdrop-blur-md border border-amber-200 rounded-full px-3 sm:px-4 py-2 shadow-lg shadow-amber-200/40 max-w-[92vw]">
+        <Construction size={14} className="text-amber-600 flex-shrink-0" />
+        <p className="text-[11px] sm:text-xs text-amber-700 font-medium text-center">This graph view is still a work in progress</p>
+      </div>
+
       <ForceGraph2D
         ref={fgRef}
         graphData={graphData as never}
-        backgroundColor="#000000"
+        backgroundColor="rgba(0,0,0,0)"
         nodeRelSize={1}
         nodeVal={(n) => (n as GNode).val}
+        d3VelocityDecay={0.55}
+        d3AlphaDecay={0.03}
+        linkCurvature={0.2}
         onNodeClick={handleNodeClick}
-        onNodeHover={(n) => setHovered((n as GNode) ?? null)}
+        onNodeHover={(n) => {
+          setHovered((n as GNode) ?? null);
+          if (n) dismissIntro();
+        }}
         onBackgroundClick={() => setSelected(null)}
         enableNodeDrag={true}
         cooldownTime={4000}
@@ -406,13 +478,13 @@ const GraphView = () => {
         linkDirectionalParticleColor={(link: LinkObject<GNode, GLink>) => {
           const target = link.target as unknown as GNode;
           const dimmed = matchSet ? !matchSet.has(target?.id) : highlightSet ? !highlightSet.has(target?.id) : false;
-          return dimmed ? 'rgba(100,116,139,0.15)' : categoryColors[target?.category] ?? '#64748b';
+          return dimmed ? 'rgba(203,213,225,0.3)' : categoryColors[target?.category] ?? '#64748b';
         }}
         linkColor={(link: LinkObject<GNode, GLink>) => {
           const s = link.source as unknown as GNode;
           const t = link.target as unknown as GNode;
           const dimmed = matchSet ? !(matchSet.has(s?.id) && matchSet.has(t?.id)) : highlightSet ? !(highlightSet.has(s?.id) && highlightSet.has(t?.id)) : false;
-          return dimmed ? 'rgba(51,65,85,0.35)' : 'rgba(148,163,184,0.6)';
+          return dimmed ? 'rgba(203,213,225,0.5)' : 'rgba(71,85,105,0.55)';
         }}
         linkWidth={(link: LinkObject<GNode, GLink>) => {
           const s = link.source as unknown as GNode;
@@ -428,23 +500,58 @@ const GraphView = () => {
           const isHovered = hovered?.id === n.id;
           const isMatch = matchSet?.has(n.id) ?? false;
           const dimmed = matchSet ? !isMatch : highlightSet ? !highlightSet.has(n.id) : false;
+          const color = categoryColors[n.category];
 
           ctx.save();
-          ctx.globalAlpha = dimmed ? 0.18 : 1;
+          ctx.globalAlpha = dimmed ? 0.15 : 1;
 
-          if ((isSelected || isMatch) && !dimmed) {
-            ctx.shadowColor = categoryColors[n.category];
-            ctx.shadowBlur = 14;
+          // Ambient pulse ring for the root, and a soft constant halo for hubs
+          if (!dimmed && n.kind === 'root') {
+            const pulse = 1 + 0.06 * Math.sin(Date.now() / 1800);
+            const ring = ctx.createRadialGradient(n.x, n.y, radius * 0.6, n.x, n.y, radius * 2.6 * pulse);
+            ring.addColorStop(0, 'rgba(202,138,4,0.3)');
+            ring.addColorStop(1, 'rgba(202,138,4,0)');
+            ctx.beginPath();
+            ctx.fillStyle = ring;
+            ctx.arc(n.x, n.y, radius * 2.6 * pulse, 0, 2 * Math.PI);
+            ctx.fill();
+          } else if (!dimmed && n.kind === 'hub') {
+            const ring = ctx.createRadialGradient(n.x, n.y, radius * 0.5, n.x, n.y, radius * 2);
+            ring.addColorStop(0, `${color}33`);
+            ring.addColorStop(1, `${color}00`);
+            ctx.beginPath();
+            ctx.fillStyle = ring;
+            ctx.arc(n.x, n.y, radius * 2, 0, 2 * Math.PI);
+            ctx.fill();
+          }
+
+          if ((isSelected || isHovered || isMatch) && !dimmed) {
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 18;
           }
 
           ctx.beginPath();
           ctx.arc(n.x, n.y, radius, 0, 2 * Math.PI);
-          ctx.fillStyle = categoryColors[n.category];
+          if (dimmed) {
+            ctx.fillStyle = color;
+          } else {
+            const orb = ctx.createRadialGradient(
+              n.x - radius * 0.35, n.y - radius * 0.35, radius * 0.1,
+              n.x, n.y, radius
+            );
+            orb.addColorStop(0, 'rgba(255,255,255,0.9)');
+            orb.addColorStop(0.32, color);
+            orb.addColorStop(1, categoryColorsDeep[n.category]);
+            ctx.fillStyle = orb;
+          }
           ctx.fill();
 
           if (isSelected || isHovered) {
             ctx.lineWidth = 1.5 / globalScale;
             ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+            ctx.lineWidth = 1 / globalScale;
+            ctx.strokeStyle = 'rgba(15,23,42,0.25)';
             ctx.stroke();
           }
           ctx.shadowBlur = 0;
@@ -455,8 +562,8 @@ const GraphView = () => {
             ctx.font = `${n.kind === 'leaf' ? '500' : '700'} ${fontSize}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
-            ctx.fillStyle = dimmed ? 'rgba(226,232,240,0.25)' : n.kind === 'root' ? '#ffffff' : '#e2e8f0';
-            ctx.fillText(n.name, n.x, n.y + radius + 2);
+            ctx.fillStyle = dimmed ? 'rgba(30,41,59,0.25)' : '#1e293b';
+            ctx.fillText(n.name, n.x, n.y + radius + 3);
           }
           ctx.restore();
         }}
@@ -472,7 +579,11 @@ const GraphView = () => {
 
       {/* Detail panel */}
       {selected && (
-        <div className="absolute top-24 right-4 bottom-6 w-[90vw] sm:w-96 z-20 clean-card-dark overflow-y-auto animate-[fade-in_0.2s_ease-out]">
+        <div
+          className="absolute top-24 right-4 bottom-6 w-[90vw] sm:w-96 z-20 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl p-6 overflow-y-auto animate-[fade-in_0.2s_ease-out] shadow-2xl"
+          style={{ borderTop: `3px solid ${categoryColors[selected.category]}`, boxShadow: `0 20px 40px -12px ${categoryColors[selected.category]}33` }}
+        >
+
           <div className="flex items-start justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: categoryColors[selected.category] }} />
@@ -482,27 +593,27 @@ const GraphView = () => {
                 </span>
               )}
             </div>
-            <button onClick={() => setSelected(null)} className="p-1 hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0">
-              <X size={18} className="text-slate-400 hover:text-white" />
+            <button onClick={() => setSelected(null)} className="p-1 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+              <X size={18} className="text-slate-400 hover:text-slate-900" />
             </button>
           </div>
 
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 text-slate-700">
             {contactIcons[selected.id]}
-            <h3 className="text-xl font-bold text-white">{selected.panel.title}</h3>
+            <h3 className="text-xl font-bold text-slate-900">{selected.panel.title}</h3>
           </div>
 
-          {selected.panel.meta && <p className="text-sm text-blue-400 font-medium mb-3">{selected.panel.meta}</p>}
+          {selected.panel.meta && <p className="text-sm text-blue-600 font-medium mb-3">{selected.panel.meta}</p>}
 
           {selected.panel.description && (
-            <p className="text-sm text-slate-300 leading-relaxed mb-4">{selected.panel.description}</p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">{selected.panel.description}</p>
           )}
 
           {selected.panel.bullets && (
             <ul className="space-y-2 mb-4">
               {selected.panel.bullets.map((b, i) => (
-                <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-1.5 flex-shrink-0" />
+                <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
                   {b}
                 </li>
               ))}
@@ -512,7 +623,7 @@ const GraphView = () => {
           {selected.panel.tags && (
             <div className="flex flex-wrap gap-2 mb-4">
               {selected.panel.tags.map((tag) => (
-                <span key={tag} className="px-2.5 py-1 bg-slate-800/50 text-white rounded-md text-xs font-medium border border-slate-700">
+                <span key={tag} className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-medium border border-slate-200">
                   {tag}
                 </span>
               ))}
@@ -520,14 +631,14 @@ const GraphView = () => {
           )}
 
           {selected.panel.links && (
-            <div className="space-y-2 pt-3 border-t border-slate-800">
+            <div className="space-y-2 pt-3 border-t border-slate-200">
               {selected.panel.links.map((l) => (
                 <a
                   key={l.url}
                   href={l.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 transition-colors"
                 >
                   <ExternalLink size={14} />
                   {l.label}
@@ -537,8 +648,8 @@ const GraphView = () => {
           )}
 
           {neighborMap.get(selected.id) && neighborMap.get(selected.id)!.size > 0 && (
-            <div className="pt-4 mt-4 border-t border-slate-800">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Connected</p>
+            <div className="pt-4 mt-4 border-t border-slate-200">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Connected</p>
               <div className="flex flex-wrap gap-2">
                 {Array.from(neighborMap.get(selected.id)!)
                   .map((id) => nodes.find((n) => n.id === id))
@@ -550,7 +661,7 @@ const GraphView = () => {
                         setSelected(n);
                         if (typeof n.x === 'number' && typeof n.y === 'number') fgRef.current?.centerAt(n.x, n.y, 500);
                       }}
-                      className="px-2.5 py-1 bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 hover:text-white rounded-md text-xs font-medium border border-slate-700 hover:border-slate-500 transition-colors"
+                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 rounded-md text-xs font-medium border border-slate-200 hover:border-slate-400 transition-colors"
                     >
                       {n.name}
                     </button>
