@@ -1,9 +1,9 @@
 import React from 'react';
 import { Github, ExternalLink, Star, GitPullRequest } from 'lucide-react';
 
-type ContributionType = 'Bug Fix' | 'Feature' | 'Tests';
+export type ContributionType = 'Bug Fix' | 'Feature' | 'Tests';
 
-interface Contribution {
+export interface Contribution {
   title: string;
   prNumber: number;
   url: string;
@@ -11,7 +11,7 @@ interface Contribution {
   summary: string;
 }
 
-interface Repo {
+export interface Repo {
   name: string;
   url: string;
   description: string;
@@ -27,12 +27,12 @@ const typeStyles: Record<ContributionType, string> = {
   Tests: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
 };
 
-const formatStars = (count?: number) => {
+export const formatStars = (count?: number) => {
   if (!count) return null;
   return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : `${count}`;
 };
 
-const repos: Repo[] = [
+export const repos: Repo[] = [
   {
     name: 'google/adk-python',
     url: 'https://github.com/google/adk-python',
